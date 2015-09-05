@@ -1,3 +1,6 @@
+#ifndef DATABASE_H
+#define DATABASE_H
+
 #include <iostream>
 class Database{
 	void selection();
@@ -8,3 +11,5 @@ class Database{
 	void cross_product();
 
 };
+
+#endif
