@@ -1,0 +1,21 @@
+#                                                                               
+# g++ -std=c++11 -Wno-write-strings *.cpp -std=c++11                            
+#-Wno-write-strings /usr/lib/x86_64-linux-gnu/libboost_program_options.so       
+#                                                                               
+#                                                                               
+
+CC=g++
+CPPFLAGS=-std=c++11 
+DEPS = Database.h Token.h Parser.h 
+
+%.o: %.c $$(CC) -c -o $@ $< $(CPPFLAGS)
+
+BBS: Database.o Token.o Parser.o Main.o
+	g++ -std=c++11 -o BBS Databse.o Token.o Parser.o Main.o
+
+.PHONY: clean
+
+clean:
+	rm -f *.o
+
+

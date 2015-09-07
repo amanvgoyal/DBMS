@@ -4,7 +4,6 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <vector>
 
 class Database{
  public:
@@ -24,11 +23,11 @@ class Database{
 	void create();
 	void update();
 	void insert();
-	void delete_tuple();
+	void delete();
  private:
 	std::fstream fs;
 
-	std::vector<std::vector<std::string> > dbCopy; 
+	std::vector< std::vector<std::string> > db_copy; 
 
 };
 
