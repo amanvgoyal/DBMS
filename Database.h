@@ -28,7 +28,7 @@ class Database{
  private:
 	std::fstream fs;
 
-	std::vector<std::vector<std::string> > dbCopy; 
+	std::vector<std::vector<std::string> > db_copy; 
 
 };
 
