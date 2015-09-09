@@ -8,28 +8,33 @@
 
 class Database{
  public:
-        Database();
-        void selection();
+        void selection();//
 	void projection();
-	void renaming();
+	void renaming(); //
 	void set_union();
-	void set_diff();
+	void set_diff();//
 	void cross_product();
 
-	void open();
+	void open(); 
 	void close();
+	void delete();
 	void save();
 	void exit();
 	void show();
-	void create();
+	void create(std::string);
 	void update();
 	void insert();
 	void delete_tuple();
+
+	void print_db();
  private:
+	void update_mat(); //
+
 	std::fstream fs;
 
 	std::vector<std::vector<std::string> > db_copy; 
 
+	bool mat_updated;
 };
 
 #endif
