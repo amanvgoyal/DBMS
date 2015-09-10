@@ -5,35 +5,34 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <map>
 
-class Database{
- public:
-        void selection();//
-	void projection();
-	void renaming(); //
-	void set_union();
-	void set_diff();//
-	void cross_product();
+typedef std::map<std::string, std::map<std::string, std::vector<std::string> > > table;
 
-	void open(); 
+class Database {
+public:
+	Database();
+	void selection();
+	table projection(string table, std::vector<std::string> attributes);	// returns the specified attributes
+	void renaming();
+	void set_union();	//
+	void set_diff();
+	void cross_product();	//
+
+	void open();
 	void close();
-	void delete();
+	void delete_table(std::string);	//
 	void save();
 	void exit();
-	void show();
-	void create(std::string);
+	void show(std::string);	//
+	void create(std::string);	//
 	void update();
-	void insert();
-	void delete_tuple();
-
-	void print_db();
- private:
-	void update_mat(); //
-
+	void insert();	//
+	void delete_tuple();	//
+private:
+	void update_mat();
 	std::fstream fs;
-
-	std::vector<std::vector<std::string> > db_copy; 
-
+	table db_copy;
 	bool mat_updated;
 };
 

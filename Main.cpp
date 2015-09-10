@@ -9,3 +9,9 @@ int main(){
 	
 
 }
+
+void database_test()
+{
+	Database db;
+
+}

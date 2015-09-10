@@ -3,12 +3,30 @@
 
 using namespace std;
 
+typedef std::map<string, map<string, vector<string> > > table;
+
+Database::Database() {
+  // ...
+}
+
 void Database::selection(){
 	
 }
 
-void Database::projection(){
+table Database::projection(string table_name, vector<string> attributes){
+	table result;
+	map<string, vector<string> >::iterator it;
 
+	for (int i = 0; i < attributes.size(); ++i)
+	{
+		it = db_copy[table_name].find(attributes[i]);
+		if (it != db_copy[table_name].end())
+		{
+			result[table_name][attributes[i]] = db_copy[table_name][attributes[i]];
+		}
+	}
+
+	return result;
 }
 
 void Database::renaming(){
@@ -35,6 +53,12 @@ void Database::close() {
 
 }
 
+void Database::delete_table(string table_name) {
+	table::iterator it;
+	it = db_copy.find(table_name);
+	db_copy.erase(it);
+}
+
 void Database::save() {
 
 }
@@ -43,34 +67,27 @@ void Database::exit() {
 
 }
 
-void Database::show() {
+void Database::show(string) {
 
 }
 
-void Database::create(string s) {
-  
+void Database::create(std::string str) {
+
 }
 
-void Database::update_mat() {
+void Database::update() {
 
 }
 
 void Database::insert() {
 
 }
- 
+
 void Database::delete_tuple() {
 
 }
 
-void Database::print_db() {
-  if (!mat_updated) {update_mat();}
-  
-  for (int i = 0; i < db_copy.size(); ++ i) {
-    for (int j = 0; j < db_copy[i].size(); ++j) {
-      cout << db_copy[i][j] << endl;
-    }
-  }
-}
+void Database::update_mat() {
 
+}
 
