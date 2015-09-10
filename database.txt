@@ -1,0 +1,10 @@
+human 
+*     age 1 2 3
+*     name jon eddard tyrion 
+*     death y y n 
+
+white_walker 
+*     age 1000000 
+*     name shiver 
+
+

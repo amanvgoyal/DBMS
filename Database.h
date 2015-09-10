@@ -5,9 +5,11 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <map>
 
 class Database{
  public:
+        Database();
         void selection();//
 	void projection();
 	void renaming(); //
@@ -17,7 +19,6 @@ class Database{
 
 	void open(); 
 	void close();
-	void delete();
 	void save();
 	void exit();
 	void show();
@@ -27,12 +28,13 @@ class Database{
 	void delete_tuple();
 
 	void print_db();
- private:
+	// private:
 	void update_mat(); //
-
+ private:
 	std::fstream fs;
 
-	std::vector<std::vector<std::string> > db_copy; 
+	std::map<std::string, std::map<std::string, 
+	  std::vector<std::string> > > db_copy;
 
 	bool mat_updated;
 };

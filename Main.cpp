@@ -6,6 +6,7 @@
 using namespace std;
 
 int main(){
-	
-
+  Database d;
+  //  d.update_mat();
+  d.print_db();
 }
