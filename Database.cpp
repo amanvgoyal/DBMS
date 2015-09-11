@@ -105,8 +105,46 @@ void Database::set_diff(){
 
 }
 
-void Database::cross_product(){
-
+table Database::cross_product(string table_name_1, string table_name_2){
+	// check if tables exist in the database
+	table_list::iterator tl_it1 = db_copy.find(table_name_1);
+	table_list::iterator tl_it2 = db_copy.find(table_name_2);
+	table result;
+	if (tl_it1 != db_copy.end() && tl_it2 != db_copy.end())
+	{
+		table table_1 = db_copy[table_name_1];
+		table table_2 = db_copy[table_name_2];
+		table::iterator it1 = table_1.begin();
+		table::iterator it2 = table_2.begin();
+		// add the attributes to the resulting table
+		for (it1; it1 != table_1.end(); ++it1) result[it1->first];
+		for (it2; it2 != table_2.end(); ++it2) result[it2->first];
+		// add the values to the attibutes
+		table::iterator r_it = result.begin();
+		it1 = table_1.begin();
+		it2 = table_2.begin();
+		for (int i = 0; i < it1->second.size(); ++i)
+		{
+			for (int j = 0; j < it2->second.size(); ++j)
+			{
+				for (it1; it1 != table_1.end(); ++it1)
+				{
+					r_it->second.push_back(it1->second[i]);
+					++r_it;
+				}
+				for (it2; it2 != table_2.end(); ++it2)
+				{
+					r_it->second.push_back(it2->second[j]);
+					++r_it;
+				}
+				// reset iterators
+				it1 = table_1.begin();
+				it2 = table_2.begin();
+				r_it = result.begin();
+			}
+		}
+	}
+	return result;
 }
 
 void Database::open() {
@@ -135,19 +173,19 @@ void Database::show(string) {
 
 }
 
-void Database::create(std::string str) {
-
+void Database::create(std::string table_name) {
+	db_copy[table_name];
 }
 
 void Database::update() {
 
 }
 
-void Database::insert() {
+void Database::insert_tuple(table tuple) {
 
 }
 
-void Database::delete_tuple() {
+void Database::delete_tuple(string attribute, string value) {
 
 }
 

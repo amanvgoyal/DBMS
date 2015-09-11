@@ -18,18 +18,18 @@ public:
 	void renaming();
 	table set_union(std::string table_name_1, std::string table_name_2);			// returns the combined data and removes duplicates
 	void set_diff();
-	void cross_product();	//
+	table cross_product(std::string table_name_1, std::string table_name_2);		// returns a table that pairs every row of both tables
 
 	void open();
 	void close();
-	void delete_table(std::string);													// deletes the specified table
+	void delete_table(std::string table_name);										// deletes the specified table
 	void save();
 	void exit();
 	void show(std::string);
-	void create(std::string);	//
+	void create(std::string table_name);											// creates a new table with the specified name
 	void update();
-	void insert();	//
-	void delete_tuple();	//
+	void insert_tuple(table tuple);													//
+	void delete_tuple(std::string attribute, std::string value);															//
 private:
 	void update_mat();
 	std::fstream fs;
