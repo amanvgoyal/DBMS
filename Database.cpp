@@ -48,7 +48,7 @@ void Database::exit() {
 }
 
 void Database::show() {
-
+  
 }
 
 void Database::create(string s) {
@@ -68,11 +68,10 @@ void Database::print_db() {
   if (!mat_updated) {update_mat();}
 
   for (auto it1 : db_copy) {
-    cout << it1.first << " - ";
+    cout << it1.first << " - \n";
     map<string, vector<string> > &inner1 = it1.second;
-    cout << inner1.size() << endl;
     for (auto it2 : inner1) {
-      cout << it2.first << ": ";
+      cout << '\t' << it2.first << ": ";
       vector<string>& innermost = it2.second;
       for (auto it3 : innermost) {
 	cout << it3 << ' ';
@@ -108,21 +107,25 @@ void Database::update_mat() {
       
       // Get tabble attribute name, put following data into vector
       else if (temp[0][0] == '*') {
-	vector<string>::const_iterator beg = temp.begin() + 2;
+	vector<string>::const_iterator beg = temp.begin() + 4;
 	vector<string>::const_iterator end = temp.end();
 	vector<string> data(beg, end); 
 
 	// Remove whitespace entries
 	for(int i=0; i < data.size();++i){
-	  if (data[i].find_first_not_of(' ') != string::npos) {
-	    //	    data.erase(data.begin() + i);
+	  //cout<<i<<'-'<<data[i]<<'_'<<data[i].size()<<endl;
+	  //if (data[i].find_first_not_of(' ') != string::npos) {
+	  if (data[i].size() == 0) {
+	    data.erase(data.begin() + i);
 	  }
+	    // }
 	}
 
 	for(int i=0; i < data.size();++i) {
-	  //	    cout<<i<<'-'<<data[i]<<'_'<<data[i].size()<<endl;
+	  //cout<<i<<'-'<<data[i]<<'_'<<data[i].size()<<endl;
 	  if (data[i].size() != 0) {
 	    attr_name = data[i];
+	    data.erase(data.begin() + i);
 	    break;
 	  }
 	}
