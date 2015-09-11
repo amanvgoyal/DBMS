@@ -33,67 +33,60 @@ void Database::renaming(){
 
 }
 
-table Database::set_union(string table_name_1, string table_name_2){
+table Database::set_union(table tbl1, table tbl2){
 	// check if tables exist in the database
-	table_list::iterator tl_it1 = db_copy.find(table_name_1);
-	table_list::iterator tl_it2 = db_copy.find(table_name_2);
 	table result;
-	if (tl_it1 != db_copy.end() && tl_it2 != db_copy.end())
+	table::iterator it1 = tbl1.begin();
+	table::iterator it2 = tbl2.begin();
+	/* key_compares might not be needed */
+	//table::key_compare kc1 = table_1.key_comp;
+	//table::key_compare kc2 = table_2.key_comp;
+	// check if the two tables have the same columns
+	bool same_attributes = true;
+	for (it1; it1 != tbl1.end(); ++it1)
 	{
-		table table_1 = db_copy[table_name_1];
-		table table_2 = db_copy[table_name_2];
-		table::iterator it1 = table_1.begin();
-		table::iterator it2 = table_2.begin();
-		/* key_compares might not be needed */
-		//table::key_compare kc1 = table_1.key_comp;
-		//table::key_compare kc2 = table_2.key_comp;
-		// check if the two tables have the same columns
-		bool same_attributes = true;
-		for (it1; it1 != table_1.end(); ++it1)
+		same_attributes = (it1->first != it2->first) ? false : true;
+		++it2;
+	}
+	if (same_attributes)
+	{
+		it1 = tbl1.begin();
+		it2 = tbl2.begin();
+		// insert tuples from first table
+		for (it1; it1 != tbl1.end(); ++it1)
 		{
-			same_attributes = (it1->first != it2->first) ? false : true;
-			++it2;
+			result[it1->first] = it1->second;
 		}
-		if (same_attributes)
-		{
-			it1 = table_1.begin();
-			it2 = table_2.begin();
-			// insert tuples from first table
-			for (it1; it1 != table_1.end(); ++it1)
-			{
-				result[it1->first] = it1->second;
+		// insert tuples from second table and check if duplicates exist
+		table::iterator r_it = result.begin();
+		bool duplicate_tuple = true;
+		for (int i = 0; i < it2->second.size(); ++i)
+		{	// start comparing the values of the first attribute in result
+			for (int j = 0; (j < r_it->second.size()) || !duplicate_tuple; ++j)
+			{	// to the values of the first attribute of table_2
+				// check if the tuple is a duplicate
+				for (r_it; (r_it != result.end()) || !duplicate_tuple; ++r_it)
+				{	// iterate through all the columns and compare
+					// the values of the tuples
+					if (it2->second[i] != r_it->second[j]) duplicate_tuple = false;
+					++it2;
+				}
+				r_it = result.begin();
+				it2 = tbl2.begin();
 			}
-			// insert tuples from second table and check if duplicates exist
-			table::iterator r_it = result.begin();
-			bool duplicate_tuple = true;
-			for (int i = 0; i < it2->second.size(); ++i)
-			{	// start comparing the values of the first attribute in result
-				for (int j = 0; (j < r_it->second.size()) || !duplicate_tuple; ++j)
-				{	// to the values of the first attribute of table_2
-					// check if the tuple is a duplicate
-					for (r_it; (r_it != result.end()) || !duplicate_tuple; ++r_it)
-					{	// iterate through all the columns and compare
-						// the values of the tuples
-						if (it2->second[i] != r_it->second[j]) duplicate_tuple = false;
-						++it2;
-					}
-					r_it = result.begin();
-					it2 = table_2.begin();
-				}
 				
-				if (!duplicate_tuple)
-				{	// add the row from table_2 to result if not a duplicate
-					for (r_it; r_it != result.end(); ++r_it)
-					{	// iterate through all the columns and add 
-						// the value of the correct row
-						r_it->second.push_back(it2->second[i]);
-						++it2;
-					}
-					// reset variables
-					r_it = result.begin();
-					it2 = table_2.begin();
-					duplicate_tuple = true;
+			if (!duplicate_tuple)
+			{	// add the row from table_2 to result if not a duplicate
+				for (r_it; r_it != result.end(); ++r_it)
+				{	// iterate through all the columns and add 
+					// the value of the correct row
+					r_it->second.push_back(it2->second[i]);
+					++it2;
 				}
+				// reset variables
+				r_it = result.begin();
+				it2 = tbl2.begin();
+				duplicate_tuple = true;
 			}
 		}
 	}
@@ -105,43 +98,36 @@ void Database::set_diff(){
 
 }
 
-table Database::cross_product(string table_name_1, string table_name_2){
+table Database::cross_product(table tbl1, table tbl2){
 	// check if tables exist in the database
-	table_list::iterator tl_it1 = db_copy.find(table_name_1);
-	table_list::iterator tl_it2 = db_copy.find(table_name_2);
 	table result;
-	if (tl_it1 != db_copy.end() && tl_it2 != db_copy.end())
+	table::iterator it1 = tbl1.begin();
+	table::iterator it2 = tbl2.begin();
+	// add the attributes to the resulting table
+	for (it1; it1 != tbl1.end(); ++it1) result[it1->first];
+	for (it2; it2 != tbl2.end(); ++it2) result[it2->first];
+	// add the values to the attibutes
+	table::iterator r_it = result.begin();
+	it1 = tbl1.begin();
+	it2 = tbl2.begin();
+	for (int i = 0; i < it1->second.size(); ++i)
 	{
-		table table_1 = db_copy[table_name_1];
-		table table_2 = db_copy[table_name_2];
-		table::iterator it1 = table_1.begin();
-		table::iterator it2 = table_2.begin();
-		// add the attributes to the resulting table
-		for (it1; it1 != table_1.end(); ++it1) result[it1->first];
-		for (it2; it2 != table_2.end(); ++it2) result[it2->first];
-		// add the values to the attibutes
-		table::iterator r_it = result.begin();
-		it1 = table_1.begin();
-		it2 = table_2.begin();
-		for (int i = 0; i < it1->second.size(); ++i)
+		for (int j = 0; j < it2->second.size(); ++j)
 		{
-			for (int j = 0; j < it2->second.size(); ++j)
+			for (it1; it1 != tbl1.end(); ++it1)
 			{
-				for (it1; it1 != table_1.end(); ++it1)
-				{
-					r_it->second.push_back(it1->second[i]);
-					++r_it;
-				}
-				for (it2; it2 != table_2.end(); ++it2)
-				{
-					r_it->second.push_back(it2->second[j]);
-					++r_it;
-				}
-				// reset iterators
-				it1 = table_1.begin();
-				it2 = table_2.begin();
-				r_it = result.begin();
+				r_it->second.push_back(it1->second[i]);
+				++r_it;
 			}
+			for (it2; it2 != tbl2.end(); ++it2)
+			{
+				r_it->second.push_back(it2->second[j]);
+				++r_it;
+			}
+			// reset iterators
+			it1 = tbl1.begin();
+			it2 = tbl2.begin();
+			r_it = result.begin();
 		}
 	}
 	return result;
