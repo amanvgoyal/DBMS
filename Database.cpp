@@ -66,33 +66,33 @@ table Database::set_union(string table_name_1, string table_name_2){
 			// insert tuples from second table and check if duplicates exist
 			table::iterator r_it = result.begin();
 			bool duplicate_tuple = true;
-			for (int i = 0; i < r_it->second.size(); ++i)
+			for (int i = 0; i < it2->second.size(); ++i)
 			{	// start comparing the values of the first attribute in result
-				for (int j = 0; j < it2->second.size(); ++j)
+				for (int j = 0; (j < r_it->second.size()) || !duplicate_tuple; ++j)
 				{	// to the values of the first attribute of table_2
-					if (r_it->second[i] != it2->second[j]) duplicate_tuple = false;
-					else
-					{	// check if the tuple is a duplicate
-						for (r_it; r_it != result.end(); ++r_it)
-						{	// iterate through all the columns and compare
-							// the values of the tuples
-							if (r_it->second[i] != it2->second[j]) duplicate_tuple = false;
-							++it2;
-						}
+					// check if the tuple is a duplicate
+					for (r_it; (r_it != result.end()) || !duplicate_tuple; ++r_it)
+					{	// iterate through all the columns and compare
+						// the values of the tuples
+						if (it2->second[i] != r_it->second[j]) duplicate_tuple = false;
+						++it2;
 					}
-					if (!duplicate_tuple)
-					{	// add the row from table_2 to result if not a duplicate
-						for (r_it; r_it != result.end(); ++r_it)
-						{	// iterate through all the columns and add 
-							// the value of the correct row
-							r_it->second.push_back(it2->second[j]);
-							++it2;
-						}
-						// reset variables
-						r_it = result.begin();
-						it2 = table_2.begin();
-						duplicate_tuple = true;
+					r_it = result.begin();
+					it2 = table_2.begin();
+				}
+				
+				if (!duplicate_tuple)
+				{	// add the row from table_2 to result if not a duplicate
+					for (r_it; r_it != result.end(); ++r_it)
+					{	// iterate through all the columns and add 
+						// the value of the correct row
+						r_it->second.push_back(it2->second[i]);
+						++it2;
 					}
+					// reset variables
+					r_it = result.begin();
+					it2 = table_2.begin();
+					duplicate_tuple = true;
 				}
 			}
 		}
