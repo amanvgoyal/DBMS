@@ -3,7 +3,8 @@
 
 using namespace std;
 
-typedef std::map<string, map<string, vector<string> > > table;
+typedef std::map<std::string, std::vector<std::string> > table;
+typedef std::map<std::string, table> table_list;
 
 Database::Database() {
   // ...
@@ -15,17 +16,16 @@ void Database::selection(){
 
 table Database::projection(string table_name, vector<string> attributes){
 	table result;
-	map<string, vector<string> >::iterator it;
+	table::iterator it;
 
 	for (int i = 0; i < attributes.size(); ++i)
-	{
+	{	// find the columns to get
 		it = db_copy[table_name].find(attributes[i]);
 		if (it != db_copy[table_name].end())
-		{
+		{	// grab the values
 			result[table_name][attributes[i]] = db_copy[table_name][attributes[i]];
 		}
 	}
-
 	return result;
 }
 
@@ -33,8 +33,10 @@ void Database::renaming(){
 
 }
 
-void Database::set_union(){
-
+table Database::set_union(string table1, string table2){
+	// check if tables are compatible
+	// i.e. check if the attributes are equivalent and the size are equivalent
+	table =
 }
 
 void Database::set_diff(){

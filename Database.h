@@ -7,24 +7,25 @@
 #include <vector>
 #include <map>
 
-typedef std::map<std::string, std::map<std::string, std::vector<std::string> > > table;
+typedef std::map<std::string, std::vector<std::string> > table;
+typedef std::map<std::string, table> table_list;
 
 class Database {
 public:
 	Database();
 	void selection();
-	table projection(string table, std::vector<std::string> attributes);	// returns the specified attributes
+	table projection(std::string table_name, std::vector<std::string> attributes);	// returns the specified attributes
 	void renaming();
-	void set_union();	//
+	table set_union(std::string table1, std::string table2);						// returns the combined data and removes duplicates
 	void set_diff();
 	void cross_product();	//
 
 	void open();
 	void close();
-	void delete_table(std::string);	//
+	void delete_table(std::string);													// deletes the specified table
 	void save();
 	void exit();
-	void show(std::string);	//
+	void show(std::string);
 	void create(std::string);	//
 	void update();
 	void insert();	//
@@ -32,7 +33,7 @@ public:
 private:
 	void update_mat();
 	std::fstream fs;
-	table db_copy;
+	table_list db_copy;
 	bool mat_updated;
 };
 
