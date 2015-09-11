@@ -16,7 +16,7 @@ public:
 	void selection();
 	table projection(std::string table_name, std::vector<std::string> attributes);	// returns the specified attributes
 	void renaming();
-	table set_union(std::string table1, std::string table2);						// returns the combined data and removes duplicates
+	table set_union(std::string table_name_1, std::string table_name_2);			// returns the combined data and removes duplicates
 	void set_diff();
 	void cross_product();	//
 
