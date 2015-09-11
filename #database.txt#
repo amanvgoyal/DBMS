@@ -25,8 +25,8 @@ slave
 *     screwed y y 
 
 old_people 
-*	     member old_bear maester_aemon ser_allister  
-*	     age 65 75 45 
-*	     death y y n  
-*	     brother y y y 
-*	     broken_vows y n y 
+*	     member jon_snow old_bear maester_aemon ser_allister grenn  
+*	     age 15 65 75 55 15 
+*	     death y y y n n 
+*	     brother y y y y y 
+*	     broken_vows y y n y y 

@@ -1,5 +1,6 @@
 #include "Database.h"
 #include <iostream>
+#include <algorithm>
  
 using namespace std;
 
@@ -73,17 +74,29 @@ table Database::set_diff(string table_name_1, string table_name_2){
   
   // check if tables exist in the database
   if (t1_it1 != db_copy.end() && t1_it2 != db_copy.end()) {
+    cout << "t1, t2 exist" << endl;
     table table_1 = db_copy[table_name_1];
     table table_2 = db_copy[table_name_2];
+
+    vector<string> t2_data;
 
     // For each attribute check if corresponding vector in tb1 is not in tb2
     // If, so add that attribute and its vector into result
     for (auto& it1 : table_1) {
       // Case where attributes match
       if (table_2.count(it1.first) > 0) {
-	if (it1.second != table_2[it1.first]) {
-	  result[it1.first] = it1.second;
+	for (int i = 0; i < it1.second.size(); ++i) {
+	  t2_data = table_2[it1.first];
+	  
+	  // If elem not in attr vector 2, but in attr vector 1, put in result 
+	  if (find(t2_data.begin(), t2_data.end(), it1.second[i]) 
+	      == t2_data.end()) {
+	    result[it1.first].push_back(it1.second[i]);
+	  }
 	}
+	//if (it1.second != table_2[it1.first]) {
+	//  result[it1.first] = it1.second;
+	//}
       }
       
       // Case where attributes do not mach

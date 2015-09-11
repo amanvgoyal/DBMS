@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include "Database.h"
 #include "Parser.h"
@@ -12,6 +13,6 @@ int main(){
  table t1 = d.selection("nights_watch", "death", "==", "y");  
  table t2 = d.selection("nights_watch", "member", "==", "maester_aemon");
 
- d.show(d.set_diff("nights_watch", "old_people"));
+ d.show(d.set_diff("nights_watch", "nights_watch"));
 }
   
