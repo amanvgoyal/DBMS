@@ -8,5 +8,5 @@ using namespace std;
 int main(){
   Database d;
   //  d.update_mat();
-  d.print_db();
+  d.show(d.selection("nights_watch", "death", "==", "y")); 
 }

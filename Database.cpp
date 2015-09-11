@@ -1,17 +1,55 @@
 #include "Database.h"
 #include <iostream>
-
+ 
 using namespace std;
 
-typedef map<string, vector<string> > table;
-typedef map<string, table> table_list;
+typedef std::map<std::string, std::vector<std::string> > table;
+typedef std::map<std::string, table> table_list;
 
 Database::Database() {
   mat_updated = false;
 }
 
-void Database::selection(){
-	
+// In relation 'table_name', if attribute 'lhs' exists,
+// check entries 'x' satisfying x op rhs
+table Database::selection(string table_name, 
+			       string lhs, string op, string rhs) {
+  table_list::iterator table_it = db_copy.find(table_name);
+  table result;
+  table t = db_copy[table_name];
+    
+  // Temporary - figure out why map is emptied
+  update_mat();
+
+  // If table exists
+  //  if (table_it != db_copy.end()) {
+  if (db_copy.count(table_name) > 0) {
+    // Add all tuples satisfying a op b to result
+    // If attribute exists in table
+    if (db_copy[table_name].count(lhs) > 0) {
+      // For each 
+      //for (auto it : db_copy[table_name][lhs]) {
+      vector<string> v = db_copy[table_name][lhs];
+      for (int i = 0; i < v.size(); ++i) {
+	if (op == "<") {}
+	else if (op == "<=") {}
+	else if (op == ">") {}
+	else if (op == ">=") {}
+	else if (op == "==") {
+	  if (v[i] == rhs) {
+	    for (auto it : db_copy[table_name]) {
+	      vector<string> v2 = db_copy[table_name][it.first];
+	      result[it.first].push_back(v2[i]);
+	    }
+	  }
+	}
+      }
+    }
+    else{cout << "Attribute DNE!" << endl;}
+  }
+  else {cout << "Table DNE!" << endl;}
+
+  return result;
 }
 
 void Database::projection(){
@@ -77,8 +115,13 @@ void Database::exit() {
 
 }
 
-void Database::show() {
-  
+void Database::show(table t) {
+  for (auto it1 : t) {
+    cout << it1.first << endl;
+    for (auto it2 : t[it1.first]) {
+      cout << "\t" << it2 << endl;
+    }
+  }
 }
 
 void Database::create(string s) {
@@ -98,6 +141,7 @@ void Database::print_db() {
   if (!mat_updated) {update_mat();}
 
   for (auto it1 : db_copy) {
+    cout << db_copy.count(it1.first)<<endl;;
     cout << it1.first << " - \n";
     map<string, vector<string> > &inner1 = it1.second;
     for (auto it2 : inner1) {
