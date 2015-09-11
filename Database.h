@@ -7,6 +7,9 @@
 #include <vector>
 #include <map>
 
+typedef std::map<std::string, std::vector<std::string> > table;
+typedef std::map<std::string, table> table_list;
+
 class Database{
  public:
         Database();
@@ -14,7 +17,7 @@ class Database{
 	void projection();
 	void renaming(); //
 	void set_union();
-	void set_diff();//
+	table set_diff(std::string, std::string);//
 	void cross_product();
 
 	void open(); 

@@ -3,6 +3,9 @@
 
 using namespace std;
 
+typedef map<string, vector<string> > table;
+typedef map<string, table> table_list;
+
 Database::Database() {
   mat_updated = false;
 }
@@ -23,8 +26,35 @@ void Database::set_union(){
 
 }
 
-void Database::set_diff(){
 
+// A \ B = {a in A | a not in b}
+table Database::set_diff(string table_name_1, string table_name_2){
+  table_list::iterator t1_it1 = db_copy.find(table_name_1);
+  table_list::iterator t1_it2 = db_copy.find(table_name_2);
+  table result;
+  
+  // check if tables exist in the database
+  if (t1_it1 != db_copy.end() && t1_it2 != db_copy.end()) {
+    table table_1 = db_copy[table_name_1];
+    table table_2 = db_copy[table_name_2];
+
+    // For each attribute check if corresponding vector in tb1 is not in tb2
+    // If, so add that attribute and its vector into result
+    for (auto& it1 : table_1) {
+      // Case where attributes match
+      if (table_2.count(it1.first) > 0) {
+	if (it1.second != table_2[it1.first]) {
+	  result[it1.first] = it1.second;
+	}
+      }
+      
+      // Case where attributes do not mach
+      else {result[it1.first] = it1.second;}
+    }
+        
+  }
+
+  return result;
 }
 
 void Database::cross_product(){
