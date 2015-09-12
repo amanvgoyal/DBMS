@@ -14,7 +14,7 @@ Database::Database() {
 // In relation 'table_name', if attribute 'lhs' exists,
 // check entries 'x' satisfying x op rhs
 table Database::selection(string table_name, 
-			       string lhs, string op, string rhs) {
+			  string lhs, string op, string rhs) {
   table_list::iterator table_it = db_copy.find(table_name);
   table result;
   table t = db_copy[table_name];
@@ -62,21 +62,25 @@ void Database::renaming(string old_name, string new_name){
   ofstream ofs;
   
   // Clear file, re-write proper contents using matrix
-  ofs.open("database.txt", ofstream::out | ofstream::trunc);
+  ofs.open("database2.txt", ofstream::out | ofstream::trunc);
 
+  // Run through db_copy and check for 'old_name' attribute instances
+  // and replace them with 'new_name'
+  // Then write changes to file
   for (auto it1 : db_copy) {
     ofs << it1.first << ' ' << endl;
-    map<string, vector<string> > &inner1 = it1.second;
-    ofs << "*\t";
-    for (auto it2 : inner1) {
-      ofs << it2.first << ' ';
-      vector<string>& innermost = it2.second;
-      for (auto it3 : innermost) {
+
+    for (auto it2 : db_copy[it1.first]) {
+      ofs << "*\t\t" << it2.first << ' ';
+
+      for (auto it3 : db_copy[it1.first][it2.first]) {
 	ofs << it3 << ' ';
       }
       ofs << endl;
     }
+    ofs << endl;
   }
+  ofs.close();
 }
 
 void Database::set_union(){
@@ -105,7 +109,7 @@ table Database::set_diff(string table_name_1, string table_name_2){
       if (table_2.count(it1.first) > 0) {
 	for (int i = 0; i < it1.second.size(); ++i) {
 	  t2_data = table_2[it1.first];
-	  
+	    
 	  // If elem not in attr vector 2, but in attr vector 1, put in result 
 	  if (find(t2_data.begin(), t2_data.end(), it1.second[i]) 
 	      == t2_data.end()) {
@@ -172,13 +176,12 @@ void Database::print_db() {
   if (!mat_updated) {update_mat();}
 
   for (auto it1 : db_copy) {
-    //    cout << db_copy.count(it1.first)<<endl;;
     cout << it1.first << " - \n";
-    map<string, vector<string> > &inner1 = it1.second;
-    for (auto it2 : inner1) {
+
+    for (auto it2 : db_copy[it1.first]) {
       cout << '\t' << it2.first << ": ";
-      vector<string>& innermost = it2.second;
-      for (auto it3 : innermost) {
+
+      for (auto it3 : db_copy[it1.first][it2.first]) {
 	cout << it3 << ' ';
       }
       cout << endl;
@@ -223,7 +226,7 @@ void Database::update_mat() {
 	  if (data[i].size() == 0) {
 	    data.erase(data.begin() + i);
 	  }
-	    // }
+	  // }
 	}
 
 	for(int i=0; i < data.size();++i) {
@@ -240,8 +243,8 @@ void Database::update_mat() {
     temp = {};
   }    
   mat_updated = true;
+  fs.close();
 }
-
 
 
 

@@ -16,7 +16,7 @@ class Database{
         table selection(std::string, 
 			     std::string, std::string, std::string);//
 	void projection();
-	void renaming(); //
+	void renaming(std::string, std::string); //
 	void set_union();
 	table set_diff(std::string, std::string);//
 	void cross_product();
