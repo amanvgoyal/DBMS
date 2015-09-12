@@ -6,6 +6,14 @@
 using namespace std;
 
 int main(){
-	
-
+  Database d;
+  //    d.update_mat();
+  //  d.print_db();
+  //d.show(d.selection("nights_watch", "death", "==", "y")); 
+  //table t1 = d.selection("nights_watch", "death", "==", "y");  
+  table t2 = d.selection("nights_watch", "member", "==", "maester_aemon");
+  //d.show(t2);
+  //  d.show(d.set_diff("nights_watch", "old_people"));
+  //  d.renaming("name", "NAME");
 }
+  
