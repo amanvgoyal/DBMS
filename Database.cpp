@@ -7,6 +7,15 @@ using namespace std;
 typedef std::map<std::string, std::vector<std::string> > table;
 typedef std::map<std::string, table> table_list;
 
+bool Database::numerical_str(string& s) {
+  string::const_iterator it = s.begin();
+  while (it != s.end()) {
+    if (!isdigit(*it)) {return false;}
+    ++it;
+  }
+  return true;
+}
+
 Database::Database() {
   mat_updated = false;
 }
@@ -18,6 +27,7 @@ table Database::selection(string table_name,
   table_list::iterator table_it = db_copy.find(table_name);
   table result;
   table t = db_copy[table_name];
+  vector<string> selected;
     
   // Temporary - figure out why map is emptied
   update_mat();
@@ -28,19 +38,36 @@ table Database::selection(string table_name,
     // Add all tuples satisfying a op b to result
     // If attribute exists in table
     if (db_copy[table_name].count(lhs) > 0) {
-      // For each 
-      //for (auto it : db_copy[table_name][lhs]) {
+      
+      // Check if comparator is strictly numerical
+      // if so, add fitting selection from db_copy to result
       vector<string> v = db_copy[table_name][lhs];
       for (int i = 0; i < v.size(); ++i) {
-	if (op == "<") {}
-	else if (op == "<=") {}
-	else if (op == ">") {}
-	else if (op == ">=") {}
+	if (op != "==") {
+	  if (!numerical_str(rhs)) {
+	    cout << "Non numerical input!" << endl;
+	    return result;
+	  }
+
+	  else { 
+	    if ((op == "<" && stod(v[i]) < stod(rhs)) ||
+		(op == "<=" && stod(v[i]) <= stod(rhs)) ||
+		(op == ">" && stod(v[i]) > stod(rhs)) ||
+		(op == ">=" && stod(v[i]) >= stod(rhs))) {
+	      for (auto it : db_copy[table_name]) {
+		selected = db_copy[table_name][it.first];
+		result[it.first].push_back(selected[i]);
+	      }
+	    }
+	  }
+	}
+	
+	// Handles equality for both words and strings
 	else if (op == "==") {
 	  if (v[i] == rhs) {
 	    for (auto it : db_copy[table_name]) {
-	      vector<string> v2 = db_copy[table_name][it.first];
-	      result[it.first].push_back(v2[i]);
+	      selected = db_copy[table_name][it.first];
+	      result[it.first].push_back(selected[i]);
 	    }
 	  }
 	}

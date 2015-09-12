@@ -34,6 +34,7 @@ class Database{
 	void print_db();
 	// private:
 	void update_mat(); //
+
  private:
 	std::fstream fs;
 
@@ -43,6 +44,8 @@ class Database{
 	std::map<std::string, std::vector<std::string> > private_keys;
 
 	bool mat_updated;
+
+	bool numerical_str(std::string&);
 };
 
 #endif
