@@ -227,7 +227,6 @@ void Database::update_mat() {
 	}
 
 	for(int i=0; i < data.size();++i) {
-	  //cout<<i<<'-'<<data[i]<<'_'<<data[i].size()<<endl;
 	  if (data[i].size() != 0) {
 	    attr_name = data[i];
 	    data.erase(data.begin() + i);
