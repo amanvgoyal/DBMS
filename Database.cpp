@@ -53,16 +53,16 @@ table Database::selection(string table_name,
 	return result;
 }
 
-table Database::projection(string table_name, vector<string> attributes) {
+table Database::projection(table tbl, vector<string> attributes) {
 	table result;
 	table::iterator it;
 
 	for (int i = 0; i < attributes.size(); ++i)
 	{	// find the columns to get
-		it = db_copy[table_name].find(attributes[i]);
-		if (it != db_copy[table_name].end())
+		it = tbl.find(attributes[i]);
+		if (it != tbl.end())
 		{	// grab the values
-			result[table_name][attributes[i]] = db_copy[table_name][attributes[i]];
+			result[attributes[i]] = tbl[attributes[i]];
 		}
 	}
 	return result;
@@ -101,17 +101,29 @@ table Database::set_union(table tbl1, table tbl2) {
 		bool duplicate_tuple = true;
 		for (int i = 0; i < it2->second.size(); ++i)
 		{	// start comparing the values of the first attribute in result
-			for (int j = 0; (j < r_it->second.size()) || !duplicate_tuple; ++j)
+			for (int j = 0; j < r_it->second.size(); ++j)
 			{	// to the values of the first attribute of table_2
 				// check if the tuple is a duplicate
-				for (r_it; (r_it != result.end()) || !duplicate_tuple; ++r_it)
-				{	// iterate through all the columns and compare
-					// the values of the tuples
-					if (it2->second[i] != r_it->second[j]) duplicate_tuple = false;
-					++it2;
+				if (duplicate_tuple)
+				{
+					for (r_it; r_it != result.end(); ++r_it)
+					{	// iterate through all the columns and compare
+						// the values of the tuples
+						if (r_it != result.end() || it2 != tbl2.end())
+						{
+							if (duplicate_tuple)
+							{
+								if (it2->second[i] != r_it->second[j]) duplicate_tuple = false;
+							}
+							else break;
+						}
+						else break;
+						++it2;
+					}
+					r_it = result.begin();
+					it2 = tbl2.begin();
 				}
-				r_it = result.begin();
-				it2 = tbl2.begin();
+				else break;
 			}
 
 			if (!duplicate_tuple)
@@ -181,9 +193,28 @@ table Database::cross_product(table tbl1, table tbl2) {
 	table result;
 	table::iterator it1 = tbl1.begin();
 	table::iterator it2 = tbl2.begin();
-	// add the attributes to the resulting table
+	// add the attributes to the resulting table, even if they are duplicates
 	for (it1; it1 != tbl1.end(); ++it1) result[it1->first];
-	for (it2; it2 != tbl2.end(); ++it2) result[it2->first];
+	for (it2; it2 != tbl2.end(); ++it2)
+	{
+		table::iterator dup = result.find(it2->first);
+		if (dup == result.end())
+		{
+			result[it2->first];
+		}
+		else
+		{
+			char suffix = '1';
+			string dup_attribute_name = it2->first;
+			dup_attribute_name += suffix;
+			while (result.find(dup_attribute_name) != result.end())
+			{
+				dup_attribute_name = it2->first;
+				suffix += 1;
+			}
+			result[dup_attribute_name];
+		}
+	}
 	// add the values to the attibutes
 	table::iterator r_it = result.begin();
 	it1 = tbl1.begin();

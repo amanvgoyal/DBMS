@@ -14,7 +14,7 @@ class Database {
 public:
 	Database();
 	table selection(std::string, std::string, std::string, std::string);
-	table projection(std::string table_name, std::vector<std::string> attributes);	// returns the specified attributes
+	table projection(table tbl, std::vector<std::string> attributes);	// returns the specified attributes
 	void renaming();
 	table set_union(table tbl1, table tbl2);										// returns the combined data and removes duplicates
 	table set_diff(std::string, std::string);
