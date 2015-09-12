@@ -57,8 +57,26 @@ void Database::projection(){
 
 }
 
-void Database::renaming(){
+void Database::renaming(string old_name, string new_name){
+  update_mat();
+  ofstream ofs;
+  
+  // Clear file, re-write proper contents using matrix
+  ofs.open("database.txt", ofstream::out | ofstream::trunc);
 
+  for (auto it1 : db_copy) {
+    ofs << it1.first << ' ' << endl;
+    map<string, vector<string> > &inner1 = it1.second;
+    ofs << "*\t";
+    for (auto it2 : inner1) {
+      ofs << it2.first << ' ';
+      vector<string>& innermost = it2.second;
+      for (auto it3 : innermost) {
+	ofs << it3 << ' ';
+      }
+      ofs << endl;
+    }
+  }
 }
 
 void Database::set_union(){
@@ -154,7 +172,7 @@ void Database::print_db() {
   if (!mat_updated) {update_mat();}
 
   for (auto it1 : db_copy) {
-    cout << db_copy.count(it1.first)<<endl;;
+    //    cout << db_copy.count(it1.first)<<endl;;
     cout << it1.first << " - \n";
     map<string, vector<string> > &inner1 = it1.second;
     for (auto it2 : inner1) {
@@ -176,7 +194,7 @@ void Database::update_mat() {
   size_t pos = 0;
 
   fstream fs("database.txt");
-
+  
   // Tokenize 
   while (getline(fs, line)) {
     while ((pos = line.find(delim)) != string::npos) {
@@ -224,7 +242,6 @@ void Database::update_mat() {
   }    
   mat_updated = true;
 }
-
 
 
 
