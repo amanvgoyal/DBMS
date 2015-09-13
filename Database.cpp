@@ -273,6 +273,71 @@ void Database::show(table t) {
 	}
 }
 
+table Database::update(table tbl, string cond_attr, string cond_val, string op, vector<string> attr_list, vector<string> val_list)
+{
+	// deletes the row specified by an attribute and a 
+	table::iterator it = tbl.find(cond_attr);
+	vector<int> row_numbers;
+	// check the condition and select the appropriate comparison
+	if (op == "==")
+	{
+		for (int i = 0; i < it->second.size(); ++i)
+		{	// figure out the index of the rows to update
+			if (it->second[i] == cond_val) row_numbers.push_back(i);
+		}
+	}
+	else if (op == "!=")
+	{
+		for (int i = 0; i < it->second.size(); ++i)
+		{	// figure out the index of the rows to update
+			if (it->second[i] == cond_val) row_numbers.push_back(i);
+		}
+	}
+	else if (op == "<")
+	{
+		for (int i = 0; i < it->second.size(); ++i)
+		{	// figure out the index of the rows to update
+			if (it->second[i] == cond_val) row_numbers.push_back(i);
+		}
+	}
+	else if (op == ">")
+	{
+		for (int i = 0; i < it->second.size(); ++i)
+		{	// figure out the index of the rows to update
+			if (it->second[i] == cond_val) row_numbers.push_back(i);
+		}
+	}
+	else if (op == "<=")
+	{
+		for (int i = 0; i < it->second.size(); ++i)
+		{	// figure out the index of the rows to update
+			if (it->second[i] == cond_val) row_numbers.push_back(i);
+		}
+	}
+	else if (op == ">=")
+	{
+		for (int i = 0; i < it->second.size(); ++i)
+		{	// figure out the index of the rows to update
+			if (it->second[i] == cond_val) row_numbers.push_back(i);
+		}
+	}
+	if (!row_numbers.empty())
+	{	// if row_numbers is empty, the rows were not found
+		for (int i = 0; i < attr_list.size(); ++i)
+		{	// find the attribute in the table from the 
+			// attribute list
+			it = tbl.find(attr_list[i]);
+			for (int j = 0; j < row_numbers.size; ++j)
+			{	// go through the row numbers to modify
+				// and modify it with the corresponding value
+				it->second[row_numbers[j]] = val_list[i];
+			}
+		}
+		
+	}
+	return tbl;
+}
+
 table Database::create(vector<string> attributes) {
 	// create a new table with the specified attributes
 	// insert_tuple should be used to insert data
@@ -301,7 +366,7 @@ table Database::insert_tuple(table dest_tbl, table tuples) {
 		++tup_it;
 	}
 	if (attributes_match)
-	{
+	{	// if the attributes match, insert the tuples
 		dest_it = dest_tbl.begin();
 		tup_it = tuples.begin();
 		while (dest_it != dest_tbl.end() || tup_it != tuples.end())
@@ -317,16 +382,56 @@ table Database::insert_tuple(table dest_tbl, table tuples) {
 	return dest_tbl;
 }
 
-table Database::delete_tuple(table tbl, string attribute, string value) {
-	// deletes the row specified by an attribute and a value
-	table::iterator it = tbl.find(attribute);
+table Database::delete_tuple(table tbl, string cond_attr, string cond_val, string op) {
+	// deletes the row specified by an attribute and a 
+	table::iterator it = tbl.find(cond_attr);
 	vector<int> row_numbers;
-	for (int i = 0; i < it->second.size(); ++i)
-	{	// figure out the index of the row to delete
-		if (it->second[i] == value) row_numbers.insert(row_numbers.begin(),i);
+	// check the condition and select the appropriate comparison
+	if (op == "==")
+	{
+		for (int i = 0; i < it->second.size(); ++i)
+		{	// figure out the index of the row to delete
+			if (it->second[i] == cond_val) row_numbers.insert(row_numbers.begin(), i);
+		}
 	}
+	else if (op == "!=")
+	{
+		for (int i = 0; i < it->second.size(); ++i)
+		{	// figure out the index of the row to delete
+			if (it->second[i] != cond_val) row_numbers.insert(row_numbers.begin(), i);
+		}
+	}
+	else if (op == "<")
+	{
+		for (int i = 0; i < it->second.size(); ++i)
+		{	// figure out the index of the row to delete
+			if (it->second[i] < cond_val) row_numbers.insert(row_numbers.begin(), i);
+		}
+	}
+	else if (op == ">")
+	{
+		for (int i = 0; i < it->second.size(); ++i)
+		{	// figure out the index of the row to delete
+			if (it->second[i] > cond_val) row_numbers.insert(row_numbers.begin(), i);
+		}
+	}
+	else if (op == "<=")
+	{
+		for (int i = 0; i < it->second.size(); ++i)
+		{	// figure out the index of the row to delete
+			if (it->second[i] <= cond_val) row_numbers.insert(row_numbers.begin(), i);
+		}
+	}
+	else if (op == ">=")
+	{
+		for (int i = 0; i < it->second.size(); ++i)
+		{	// figure out the index of the row to delete
+			if (it->second[i] >= cond_val) row_numbers.insert(row_numbers.begin(), i);
+		}
+	}
+
 	if (!row_numbers.empty())
-	{	// if row_number is -1, the row was not found
+	{	// if row_numbers is empty, the rows were not found
 		it = tbl.begin();
 		while (it != tbl.end())
 		{	// iterate through and erase the tuple
