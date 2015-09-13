@@ -196,7 +196,7 @@ table Database::cross_product(table tbl1, table tbl2) {
 	// add the attributes to the resulting table, even if they are duplicates
 	for (it1; it1 != tbl1.end(); ++it1) result[it1->first];
 	for (it2; it2 != tbl2.end(); ++it2)
-	{
+	{	// check if there are duplicate attributes present
 		table::iterator dup = result.find(it2->first);
 		if (dup == result.end())
 		{
@@ -273,16 +273,71 @@ void Database::show(table t) {
 	}
 }
 
-void Database::create(std::string table_name) {
-	db_copy[table_name];
+table Database::create(vector<string> attributes) {
+	// create a new table with the specified attributes
+	// insert_tuple should be used to insert data
+	table new_table;
+	for (int i = 0; i < attributes.size(); ++i)
+	{
+		new_table[attributes[i]];
+	}
+	return new_table;
 }
 
-void Database::insert_tuple(table tuple) {
-
+table Database::insert_tuple(table dest_tbl, table tuples) {
+	// inserts the tuples into the destination table
+	table::iterator dest_it = dest_tbl.begin();
+	table::iterator tup_it = tuples.begin();
+	bool attributes_match = true;
+	while (dest_it != dest_tbl.end() || tup_it != tuples.end())
+	{	// check if the destination table and the tuples to insert
+		// have the same attributes
+		if (dest_it->first != tup_it->first)
+		{
+			attributes_match = false;
+			break;
+		}
+		++dest_it;
+		++tup_it;
+	}
+	if (attributes_match)
+	{
+		dest_it = dest_tbl.begin();
+		tup_it = tuples.begin();
+		while (dest_it != dest_tbl.end() || tup_it != tuples.end())
+		{
+			for (int i = 0; i < tup_it->second.size(); ++i)
+			{	// insert the tuple into the table
+				dest_it->second.push_back(tup_it->second[i]);
+			}
+			++dest_it;
+			++tup_it;
+		}
+	}
+	return dest_tbl;
 }
 
-void Database::delete_tuple(string attribute, string value) {
-
+table Database::delete_tuple(table tbl, string attribute, string value) {
+	// deletes the row specified by an attribute and a value
+	table::iterator it = tbl.find(attribute);
+	vector<int> row_numbers;
+	for (int i = 0; i < it->second.size(); ++i)
+	{	// figure out the index of the row to delete
+		if (it->second[i] == value) row_numbers.insert(row_numbers.begin(),i);
+	}
+	if (!row_numbers.empty())
+	{	// if row_number is -1, the row was not found
+		it = tbl.begin();
+		while (it != tbl.end())
+		{	// iterate through and erase the tuple
+			for (int i = 0; i < row_numbers.size(); ++i)
+			{
+				it->second.erase(it->second.begin() + row_numbers[i]);
+			}
+			++it;
+		}
+	}
+	return tbl;
 }
 
 void Database::print_db() {

@@ -31,5 +31,12 @@ int main(){
 	attributes.push_back("age");
 	table t1_proj = d.projection(t1, attributes);
 	d.show(t1_proj);
+	table t3_delete = d.delete_tuple(t3, "death", "y");
+	cout << "Delete rows from Table 3 that have \"y\" in \"death\"\n";
+	d.show(t3_delete);
+	table t3_delete2 = d.delete_tuple(t3, "death", "n");
+	table t3_restored = d.insert_tuple(t3_delete, t3_delete2);
+	cout << "Insert deleted rows back into Table 1.\n";
+	d.show(t3_restored);
 	return 0;
 }
