@@ -1,7 +1,8 @@
 #include "Database.h"
 #include <iostream>
 #include <algorithm>
- 
+#include <stdio.h>
+
 using namespace std;
 
 typedef std::map<std::string, std::vector<std::string> > table;
@@ -85,29 +86,34 @@ void Database::projection(){
 }
 
 void Database::renaming(string old_name, string new_name){
-  update_mat();
-  ofstream ofs;
-  
-  // Clear file, re-write proper contents using matrix
-  ofs.open("database2.txt", ofstream::out | ofstream::trunc);
+   update_mat();
+   
+   fstream fs("database.txt");
+   ofstream fs2("database3.txt");
+   string line;
+   size_t pos = 0;
+   vector<string> new_lines;
+   
 
-  // Run through db_copy and check for 'old_name' attribute instances
-  // and replace them with 'new_name'
-  // Then write changes to file
-  for (auto it1 : db_copy) {
-    ofs << it1.first << ' ' << endl;
+   // Replace attribute titles with new_name
+   // on a 'by line' basis, rewriting new lines to new file
+   // then destroying old database.txt and giving that name to the new one
+   while (getline(fs, line)) {
+     pos = line.find(old_name);
+     while (pos != string::npos) {
+       line.replace(pos, old_name.size(), new_name);
+       break;
+     }
+     new_lines.push_back(line);
+     fs2 << line << endl;
+   }
+   remove("database.txt");
+   fs.close();
+   
+   fs2.close();
+   rename("database3.txt", "database.txt");
 
-    for (auto it2 : db_copy[it1.first]) {
-      ofs << "*\t\t" << it2.first << ' ';
-
-      for (auto it3 : db_copy[it1.first][it2.first]) {
-	ofs << it3 << ' ';
-      }
-      ofs << endl;
-    }
-    ofs << endl;
-  }
-  ofs.close();
+   update_mat();
 }
 
 void Database::set_union(){
@@ -192,7 +198,7 @@ void Database::create(string s) {
 
 
 void Database::insert() {
-
+  
 }
  
 void Database::delete_tuple() {
@@ -201,7 +207,7 @@ void Database::delete_tuple() {
 
 void Database::print_db() {
   if (!mat_updated) {update_mat();}
-
+  
   for (auto it1 : db_copy) {
     cout << it1.first << " - \n";
 
@@ -223,7 +229,7 @@ void Database::update_mat() {
   
   size_t pos = 0;
 
-  fstream fs("database.txt");
+  fstream fs("database3.txt");
   
   // Tokenize 
   while (getline(fs, line)) {
@@ -240,7 +246,7 @@ void Database::update_mat() {
 	new_name = temp[0];
       }
       
-      // Get tabble attribute name, put following data into vector
+      // Get table attribute name, put following data into vector
       else if (temp[0][0] == '*') {
 	vector<string>::const_iterator beg = temp.begin() + 4;
 	vector<string>::const_iterator end = temp.end();
@@ -263,21 +269,14 @@ void Database::update_mat() {
 	    break;
 	  }
 	}
-
 	db_copy[new_name][attr_name] = data; // Add entry to db
       }
     }
     temp = {};
+    //for (int i = 0; i < temp.size(); ++i) {
+    //  temp[i].erase();
+    //}  
   }    
   mat_updated = true;
   fs.close();
 }
-
-
-
-
-
-
-
-
-
