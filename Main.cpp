@@ -7,7 +7,9 @@ using namespace std;
 
 int main(){
    Database d;
-   d.update_mat();
+   //d.open("nights_watch.db");
+   d.update_mat("nights_watch.db");
+   d.update_mat("human.db");
   //d.show(d.selection("nights_watch", "death", "==", "y")); 
    //   table t1 = d.selection("nights_watch", "death", "==", "y");  
    //table t2 = d.selection("nights_watch", "age", "==", "65");
@@ -17,7 +19,7 @@ int main(){
 
    //   d.print_db();
  // d.show(d.set_diff("nights_watch", "old_people"));
-   d.renaming("name", "NAME");
+   //d.renaming("name", "NAME");
    d.print_db();
 }
   

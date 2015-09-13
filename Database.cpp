@@ -23,6 +23,7 @@ Database::Database() {
 
 // In relation 'table_name', if attribute 'lhs' exists,
 // check entries 'x' satisfying x op rhs
+// ADD SELECT ALL
 table Database::selection(string table_name, 
 			  string lhs, string op, string rhs) {
   table_list::iterator table_it = db_copy.find(table_name);
@@ -31,7 +32,7 @@ table Database::selection(string table_name,
   vector<string> selected;
     
   // Temporary - figure out why map is emptied
-  update_mat();
+  //  update_mat();
 
   // If table exists
   //  if (table_it != db_copy.end()) {
@@ -94,7 +95,7 @@ void Database::projection(){
 }
 
 void Database::renaming(string old_name, string new_name){
-   update_mat();
+  //   update_mat();
    
    fstream fs("database.txt");
    ofstream fs2("database3.txt");
@@ -121,7 +122,7 @@ void Database::renaming(string old_name, string new_name){
    fs2.close();
    rename("database3.txt", "database.txt");
 
-   update_mat();
+   //   update_mat();
 }
 
 void Database::set_union(){
@@ -175,8 +176,7 @@ void Database::cross_product(){
 
 }
 
-void Database::open() {
-
+void Database::open(string table_name) {
 }
 
 //
@@ -216,8 +216,7 @@ void Database::delete_tuple() {
 }
 
 void Database::print_db() {
-  if (!mat_updated) {update_mat();}
-  
+  //  if (!mat_updated) {update_mat();}
   for (auto it1 : db_copy) {
     cout << it1.first << " - \n";
 
@@ -232,14 +231,14 @@ void Database::print_db() {
   }
 }
 
-void Database::update_mat() {
+void Database::update_mat(string table_name) {
   string line, tok, new_name, attr_name;
   string delim = " ";
   vector<string> temp;
   
   size_t pos = 0;
 
-  fstream fs("database3.txt");
+  fstream fs(table_name);
   
   // Tokenize 
   while (getline(fs, line)) {
@@ -289,4 +288,4 @@ void Database::update_mat() {
   }    
   mat_updated = true;
   fs.close();
-}
+}  

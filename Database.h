@@ -21,7 +21,7 @@ class Database{
 	table set_diff(std::string, std::string);//
 	void cross_product();
 
-	void open(); //......
+	void open(std::string); //......
 	void close(); //
 	void save(); 
 	void exit(); //
@@ -33,7 +33,7 @@ class Database{
 
 	void print_db();
 	// private:
-	void update_mat(); //
+	void update_mat(std::string); //
 
  private:
 	std::fstream fs;
@@ -46,6 +46,8 @@ class Database{
 	bool mat_updated;
 
 	bool numerical_str(std::string&);
+
+	std::vector<std::string> table_names;
 };
 
 #endif
