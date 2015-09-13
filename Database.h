@@ -20,10 +20,10 @@ public:
 	table set_diff(std::string, std::string);
 	table cross_product(table tbl1, table tbl2);									// returns a table that pairs every row of both tables
 
-	void open();
+	void open();																	//
 	void close();
 	void delete_table(std::string table_name);										// deletes the specified table
-	void save();
+	void save();																	//
 	void exit();
 	void show(table tbl);
 	table create(std::vector<std::string> attributes);								// creates a new table with the specified name
