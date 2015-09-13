@@ -21,9 +21,9 @@ class Database{
 	table set_diff(std::string, std::string);//
 	void cross_product();
 
-	void open(); //
-	void close();//
-	void save(); //
+	void open(); //......
+	void close(); //
+	void save(); 
 	void exit(); //
 	void show(table); //
 	void create(std::string); //

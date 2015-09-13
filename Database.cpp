@@ -72,6 +72,14 @@ table Database::selection(string table_name,
 	    }
 	  }
 	}
+	else if (op == "!=") {
+	  if (v[i] != rhs) {
+	    for (auto it : db_copy[table_name]) {
+	      selected = db_copy[table_name][it.first];
+	      result[it.first].push_back(selected[i]);
+	    }
+	  }
+	}
       }
     }
     else{cout << "Attribute DNE!" << endl;}
@@ -171,6 +179,7 @@ void Database::open() {
 
 }
 
+//
 void Database::close() {
 
 }
@@ -179,6 +188,7 @@ void Database::save() {
 
 }
 
+//
 void Database::exit() {
 
 }
