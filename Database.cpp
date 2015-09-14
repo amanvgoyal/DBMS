@@ -2,11 +2,12 @@
 #include <iostream>
 #include <algorithm>
 #include <stdio.h>
+#include <stdlib.h>
 
 using namespace std;
 
-typedef std::map<std::string, std::vector<std::string> > table;
-typedef std::map<std::string, table> table_list;
+typedef map<string, vector<string> > table;
+typedef map<string, table> table_list;
 
 bool Database::numerical_str(string& s) {
   string::const_iterator it = s.begin();
@@ -214,9 +215,7 @@ void Database::save(table t, string table_name) {
 
 // Remove everything from db_copy
 void Database::exit() {
-  for (auto& it : db_copy) {
-    db_copy.erase(it.first);
-  }
+  abort();
 }
 
 void Database::show(table t) {
