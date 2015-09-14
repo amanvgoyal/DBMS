@@ -21,6 +21,12 @@ Database::Database() {
   mat_updated = false;
 }
 
+bool Database::file_exists(string file_name) {
+  ifstream ifs(file_name);
+  if (ifs.good()) {return true;}
+  return false;
+}
+
 // In relation 'table_name', if attribute 'lhs' exists,
 // check entries 'x' satisfying x op rhs
 // ADD SELECT ALL
@@ -35,8 +41,7 @@ table Database::selection(string table_name,
   //  update_mat();
 
   // If table exists
-  //  if (table_it != db_copy.end()) {
-  if (db_copy.count(table_name) > 0) {
+    if (db_copy.count(table_name) > 0) {
     // Add all tuples satisfying a op b to result
     // If attribute exists in table
     if (db_copy[table_name].count(lhs) > 0) {
@@ -81,6 +86,12 @@ table Database::selection(string table_name,
 	    }
 	  }
 	}
+	else if (op == "*") {
+	  for (auto it : db_copy[table_name]) {
+	    selected = db_copy[table_name][it.first];
+	    result[it.first].push_back(selected[i]);
+	  }
+	}
       }
     }
     else{cout << "Attribute DNE!" << endl;}
@@ -94,35 +105,33 @@ void Database::projection(){
 
 }
 
-void Database::renaming(string old_name, string new_name){
-  //   update_mat();
-   
-   fstream fs("database.txt");
-   ofstream fs2("database3.txt");
-   string line;
-   size_t pos = 0;
-   vector<string> new_lines;
-   
+void Database::renaming(string table_name, string old_name, string new_name){
+  if (!file_exists(table_name)) {return;} // Throw exp
 
-   // Replace attribute titles with new_name
-   // on a 'by line' basis, rewriting new lines to new file
-   // then destroying old database.txt and giving that name to the new one
-   while (getline(fs, line)) {
-     pos = line.find(old_name);
-     while (pos != string::npos) {
-       line.replace(pos, old_name.size(), new_name);
-       break;
-     }
-     new_lines.push_back(line);
-     fs2 << line << endl;
-   }
-   remove("database.txt");
-   fs.close();
-   
-   fs2.close();
-   rename("database3.txt", "database.txt");
+  fstream fs(table_name);
+  ofstream fs2("temp.db");
+  string line;
+  size_t pos = 0;
+  vector<string> new_lines;
 
-   //   update_mat();
+  // Replace attribute titles with new_name
+  // on a 'by line' basis, rewriting new lines to new file
+  // then destroying old database.txt and giving that name to the new one
+  while (getline(fs, line)) {
+    pos = line.find(old_name);
+    while (pos != string::npos) {
+      line.replace(pos, old_name.size(), new_name);
+      break;
+    }
+    new_lines.push_back(line);
+    fs2 << line << endl;
+  }
+  remove(table_name.c_str());
+  fs.close();
+   
+  fs2.close();
+  rename("temp.db", table_name.c_str());
+  // update_mat();
 }
 
 void Database::set_union(){
@@ -132,13 +141,11 @@ void Database::set_union(){
 
 // A \ B = {a in A | a not in b}
 table Database::set_diff(string table_name_1, string table_name_2){
-  table_list::iterator t1_it1 = db_copy.find(table_name_1);
-  table_list::iterator t1_it2 = db_copy.find(table_name_2);
   table result;
   
   // check if tables exist in the database
-  if (t1_it1 != db_copy.end() && t1_it2 != db_copy.end()) {
-    cout << "t1, t2 exist" << endl;
+  // if (t1_it1 != db_copy.end() && t1_it2 != db_copy.end()) {
+  if (db_copy.count(table_name_1) > 0 && db_copy.count(table_name_2) > 0) {
     table table_1 = db_copy[table_name_1];
     table table_2 = db_copy[table_name_2];
 
@@ -158,9 +165,6 @@ table Database::set_diff(string table_name_1, string table_name_2){
 	    result[it1.first].push_back(it1.second[i]);
 	  }
 	}
-	//if (it1.second != table_2[it1.first]) {
-	//  result[it1.first] = it1.second;
-	//}
       }
       
       // Case where attributes do not mach
@@ -179,26 +183,48 @@ void Database::cross_product(){
 void Database::open(string table_name) {
 }
 
-//
-void Database::close() {
+//Removes a table from db_copy
+void Database::close(string table_name) {
+  if (!file_exists(table_name)) {return;} // throw exp  
 
+  if (db_copy.count(table_name) > 0) {
+    db_copy.erase(table_name);
+  }
 }
 
-void Database::save() {
+// 
+void Database::save(table t, string table_name) {
+  if (file_exists(table_name)) {return;} // Throw exp
 
+  fstream fs(table_name);
+
+  // write table_name minus ".db"
+  // write table contents
+  fs << table_name.substr(0,table_name.size() - 3) << ' ' << endl;
+  for (auto it1 : t) {
+    fs << "*        " << it1.first << ' ';
+    for (auto it2 : t[it1.first]) {
+      fs << it2 << ' ';
+    }
+    fs << endl;
+  }
+  fs.close();
 }
 
-//
+// Remove everything from db_copy
 void Database::exit() {
-
+  for (auto& it : db_copy) {
+    db_copy.erase(it.first);
+  }
 }
 
 void Database::show(table t) {
   for (auto it1 : t) {
-    cout << it1.first << endl;
+    cout << it1.first << " -"; 
     for (auto it2 : t[it1.first]) {
-      cout << "\t" << it2 << endl;
+      cout << it2 << ' ';
     }
+    cout << endl;
   }
 }
 
@@ -263,12 +289,9 @@ void Database::update_mat(string table_name) {
 
 	// Remove whitespace entries
 	for(int i=0; i < data.size();++i){
-	  //cout<<i<<'-'<<data[i]<<'_'<<data[i].size()<<endl;
-	  //if (data[i].find_first_not_of(' ') != string::npos) {
 	  if (data[i].size() == 0) {
 	    data.erase(data.begin() + i);
 	  }
-	  // }
 	}
 
 	for(int i=0; i < data.size();++i) {
@@ -282,9 +305,6 @@ void Database::update_mat(string table_name) {
       }
     }
     temp = {};
-    //for (int i = 0; i < temp.size(); ++i) {
-    //  temp[i].erase();
-    //}  
   }    
   mat_updated = true;
   fs.close();

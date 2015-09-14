@@ -16,14 +16,14 @@ class Database{
         table selection(std::string, 
 			     std::string, std::string, std::string);//
 	void projection();
-	void renaming(std::string, std::string); //
+	void renaming(std::string, std::string, std::string); //
 	void set_union();
 	table set_diff(std::string, std::string);//
 	void cross_product();
 
 	void open(std::string); //......
-	void close(); //
-	void save(); 
+	void close(std::string); //
+	void save(table, std::string); 
 	void exit(); //
 	void show(table); //
 	void create(std::string); //
@@ -46,8 +46,7 @@ class Database{
 	bool mat_updated;
 
 	bool numerical_str(std::string&);
-
-	std::vector<std::string> table_names;
+	bool file_exists(std::string);
 };
 
 #endif
