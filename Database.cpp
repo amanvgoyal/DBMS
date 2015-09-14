@@ -221,7 +221,7 @@ void Database::exit() {
 
 void Database::show(table t) {
   for (auto it1 : t) {
-    cout << it1.first << " -"; 
+    cout << it1.first << " - "; 
     for (auto it2 : t[it1.first]) {
       cout << it2 << ' ';
     }
