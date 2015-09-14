@@ -21,7 +21,8 @@ int main(){
   //d.show(t2);
 
   //   d.print_db();
-   d.show(d.set_diff("nights_watch", "old_people"));
+  //  d.show(d.set_diff("nights_watch", "old_people"));
+  d.show(d.set_diff("nights_watch", "old_people"));
   //  d.renaming("human.db", "name", "NAME");
    //  d.print_db();
 }
