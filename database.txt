@@ -1,11 +1,11 @@
 human 
 *     age 1 2 3 
-*     name jon eddard tyrion 
+*     NAME jon eddard tyrion 
 *     death y y n 
 
 white_walker 
 *     age 1000000 
-*     name shiver 
+*     NAME shiver 
 
 nights_watch 
 *	     member jon_snow old_bear maester_aemon ser_allister grenn  
@@ -15,11 +15,11 @@ nights_watch
 *	     broken_vows y y n y y 
 
 author 
-*      name GRRM 
+*      NAME GRRM 
 *      age old 
 
 slave 
-*     name tyrion jorah 
+*     NAME tyrion jorah 
 *     death n n 
 *     dying n y 
 *     screwed y y 
