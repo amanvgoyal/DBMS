@@ -30,76 +30,72 @@ bool Database::file_exists(string file_name) {
 
 // In relation 'table_name', if attribute 'lhs' exists,
 // check entries 'x' satisfying x op rhs
-// ADD SELECT ALL
-table Database::selection(string table_name,
-	string lhs, string op, string rhs) {
-	table_list::iterator table_it = db_copy.find(table_name);
-	table result;
-	table t = db_copy[table_name];
-	vector<string> selected;
+table Database::selection(string table_name, 
+			  string lhs, string op, string rhs) {
+  table_list::iterator table_it = db_copy.find(table_name);
+  table result;
+  table t = db_copy[table_name];
+  vector<string> selected;
 
-	// Temporary - figure out why map is emptied
-	//  update_mat();
+  // If table exists
+  if (db_copy.count(table_name) > 0) {
+    // Add all tuples satisfying a op b to result
+    // If attribute exists in table
+    if (db_copy[table_name].count(lhs) > 0) {
+      
+      // Check if comparator is strictly numerical
+      // if so, add fitting selection from db_copy to result
+      vector<string> v = db_copy[table_name][lhs];
+      for (int i = 0; i < v.size(); ++i) {
+	if (op != "==") {
+	  if (!numerical_str(rhs)) {
+	    cout << "Non numerical input!" << endl;
+	    return result;
+	  }
 
-	// If table exists
-	if (db_copy.count(table_name) > 0) {
-		// Add all tuples satisfying a op b to result
-		// If attribute exists in table
-		if (db_copy[table_name].count(lhs) > 0) {
-
-			// Check if comparator is strictly numerical
-			// if so, add fitting selection from db_copy to result
-			vector<string> v = db_copy[table_name][lhs];
-			for (int i = 0; i < v.size(); ++i) {
-				if (op != "==") {
-					if (!numerical_str(rhs)) {
-						cout << "Non numerical input!" << endl;
-						return result;
-					}
-
-					else {
-						if ((op == "<" && stod(v[i]) < stod(rhs)) ||
-							(op == "<=" && stod(v[i]) <= stod(rhs)) ||
-							(op == ">" && stod(v[i]) > stod(rhs)) ||
-							(op == ">=" && stod(v[i]) >= stod(rhs))) {
-							for (auto it : db_copy[table_name]) {
-								selected = db_copy[table_name][it.first];
-								result[it.first].push_back(selected[i]);
-							}
-						}
-					}
-				}
-
-				// Handles equality for both words and strings
-				else if (op == "==") {
-					if (v[i] == rhs) {
-						for (auto it : db_copy[table_name]) {
-							selected = db_copy[table_name][it.first];
-							result[it.first].push_back(selected[i]);
-						}
-					}
-				}
-				else if (op == "!=") {
-					if (v[i] != rhs) {
-						for (auto it : db_copy[table_name]) {
-							selected = db_copy[table_name][it.first];
-							result[it.first].push_back(selected[i]);
-						}
-					}
-				}
-				else if (op == "*") {
-					for (auto it : db_copy[table_name]) {
-						selected = db_copy[table_name][it.first];
-						result[it.first].push_back(selected[i]);
-					}
-				}
-			}
-		}
-		else { cout << "Attribute DNE!" << endl; }
+	  else { 
+	    if ((op == "<" && stod(v[i]) < stod(rhs)) ||
+		(op == "<=" && stod(v[i]) <= stod(rhs)) ||
+		(op == ">" && stod(v[i]) > stod(rhs)) ||
+		(op == ">=" && stod(v[i]) >= stod(rhs))) {
+	      for (auto it : db_copy[table_name]) {
+		selected = db_copy[table_name][it.first];
+		result[it.first].push_back(selected[i]);
+	      }
+	    }
+	  }
 	}
-	else { cout << "Table DNE!" << endl; }
+	
+	// Handles equality for both words and strings
+	else if (op == "==") {
+	  if (v[i] == rhs) {
+	    for (auto it : db_copy[table_name]) {
+	      selected = db_copy[table_name][it.first];
+	      result[it.first].push_back(selected[i]);
+	    }
+	  }
+	}
+	else if (op == "!=") {
+	  if (v[i] != rhs) {
+	    for (auto it : db_copy[table_name]) {
+	      selected = db_copy[table_name][it.first];
+	      result[it.first].push_back(selected[i]);
+	    }
+	  }
+	}
+	else if (op == "*") {
+	  for (auto it : db_copy[table_name]) {
+	    selected = db_copy[table_name][it.first];
+	    result[it.first].push_back(selected[i]);
+	  }
+	}
+      }
+    }
+    else{cout << "Attribute DNE!" << endl;}
+  }
+  else {throw invalid_argument("No such table open!");}
 
-	return result;
+  return result;
 }
 
 table Database::projection(table tbl, vector<string> attributes) {
@@ -117,33 +113,33 @@ table Database::projection(table tbl, vector<string> attributes) {
 	return result;
 }
 
-void Database::renaming(string table_name, string old_name, string new_name) {
-	if (!file_exists(table_name)) { return; } // Throw exp
+void Database::renaming(string table_name, string old_name, string new_name){
+  if (!file_exists(table_name)) 
+    {throw invalid_argument("No such table open!");} 
 
-	fstream fs(table_name);
-	ofstream fs2("temp.db");
-	string line;
-	size_t pos = 0;
-	vector<string> new_lines;
+  fstream fs(table_name);
+  ofstream fs2("temp.db");
+  string line;
+  size_t pos = 0;
+  vector<string> new_lines;
 
-	// Replace attribute titles with new_name
-	// on a 'by line' basis, rewriting new lines to new file
-	// then destroying old database.txt and giving that name to the new one
-	while (getline(fs, line)) {
-		pos = line.find(old_name);
-		while (pos != string::npos) {
-			line.replace(pos, old_name.size(), new_name);
-			break;
-		}
-		new_lines.push_back(line);
-		fs2 << line << endl;
-	}
-	remove(table_name.c_str());
-	fs.close();
-
-	fs2.close();
-	rename("temp.db", table_name.c_str());
-	// update_mat();
+  // Replace attribute titles with new_name
+  // on a 'by line' basis, rewriting new lines to new file
+  // then destroying old database.txt and giving that name to the new one
+  while (getline(fs, line)) {
+    pos = line.find(old_name);
+    while (pos != string::npos) {
+      line.replace(pos, old_name.size(), new_name);
+      break;
+    }
+    new_lines.push_back(line);
+    fs2 << line << endl;
+  }
+  remove(table_name.c_str());
+  fs.close();
+   
+  fs2.close();
+  rename("temp.db", table_name.c_str());
 }
 
 table Database::set_union(table tbl1, table tbl2) {
