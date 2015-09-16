@@ -363,7 +363,7 @@ void Database::show(table t) {
 	}
 }
 
-table Database::update(table tbl, string cond_attr, string cond_val, string op, vector<string> attr_list, vector<string> val_list)
+table Database::update(table tbl, string cond_attr, string op, string cond_val, vector<string> attr_list, vector<string> val_list)
 {
 	// deletes the row specified by an attribute and a 
 	table::iterator it = tbl.find(cond_attr);
@@ -417,7 +417,7 @@ table Database::update(table tbl, string cond_attr, string cond_val, string op, 
 		{	// find the attribute in the table from the 
 			// attribute list
 			it = tbl.find(attr_list[i]);
-			for (int j = 0; j < row_numbers.size; ++j)
+			for (int j = 0; j < row_numbers.size(); ++j)
 			{	// go through the row numbers to modify
 				// and modify it with the corresponding value
 				it->second[row_numbers[j]] = val_list[i];
@@ -426,6 +426,20 @@ table Database::update(table tbl, string cond_attr, string cond_val, string op, 
 
 	}
 	return tbl;
+}
+
+table Database::update(string tbl_name, string cond_attr, string op, string cond_val, vector<string> attr_list, vector<string> val_list)
+{
+	table_list::iterator it = db_copy.find(tbl_name);
+	if (it != db_copy.end())
+	{
+		return update(it->second, cond_attr, op, cond_val, attr_list, val_list);
+	}
+	else
+	{
+		throw invalid_argument("Table " + tbl_name + " not found!");
+		return db_copy.end()->second;
+	}
 }
 
 table Database::create(vector<string> attributes) {
@@ -472,7 +486,21 @@ table Database::insert_tuple(table dest_tbl, table tuples) {
 	return dest_tbl;
 }
 
-table Database::delete_tuple(table tbl, string cond_attr, string cond_val, string op) {
+table Database::insert_tuple(string dest_tbl, table tuples)
+{
+	table_list::iterator it = db_copy.find(dest_tbl);
+	if (it != db_copy.end())
+	{
+		return insert_tuple(it->second, tuples);
+	}
+	else
+	{
+		throw invalid_argument("Table " + dest_tbl + " not found!");
+		return db_copy.end()->second;
+	}
+}
+
+table Database::delete_tuple(table tbl, string cond_attr, string op, string cond_val) {
 	// deletes the row specified by an attribute and a 
 	table::iterator it = tbl.find(cond_attr);
 	vector<int> row_numbers;
@@ -519,7 +547,34 @@ table Database::delete_tuple(table tbl, string cond_attr, string cond_val, strin
 			if (it->second[i] >= cond_val) row_numbers.insert(row_numbers.begin(), i);
 		}
 	}
+	// delete the rows that matched, if any
+	if (!row_numbers.empty())
+	{	// if row_numbers is empty, the rows were not found
+		it = tbl.begin();
+		while (it != tbl.end())
+		{	// iterate through and erase the tuple
+			for (int i = 0; i < row_numbers.size(); ++i)
+			{
+				it->second.erase(it->second.begin() + row_numbers[i]);
+			}
+			++it;
+		}
+	}
+	return tbl;
+}
 
+table Database::delete_tuple(string tbl_name, string cond_attr, string op, string cond_val)
+{
+	table_list::iterator it = db_copy.find(tbl_name);
+	if (it != db_copy.end())
+	{
+		return delete_tuple(it->second, cond_attr, op, cond_val);
+	}
+	else
+	{
+		throw invalid_argument("Table " + tbl_name + " not found!");
+		return db_copy.end()->second;
+	}
 }
 
 void Database::print_db() {

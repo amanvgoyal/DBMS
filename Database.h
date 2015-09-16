@@ -15,25 +15,27 @@ public:
 	Database();
 	table selection(std::string,
 		std::string, std::string, std::string);//
-	table projection(table tbl, std::vector<std::string> attributes);				// returns the specified attributes
+	table projection(table, std::vector<std::string>);						// returns the specified attributes
 	void renaming(std::string, std::string, std::string); //
-	table set_union(table tbl1, table tbl2);										// returns the combined data and removes duplicates
+	table set_union(table, table);											// returns the combined data and removes duplicates
 	table set_diff(std::string, std::string);//
-	table cross_product(table tbl1, table tbl2);									// returns a table that pairs every row of both tables
+	table cross_product(table, table);										// returns a table that pairs every row of both tables
 
 	void open(std::string); //......
 	void close(std::string); //
 	void exit();
-	void delete_table(std::string table_name);										// deletes the specified table
+	void delete_table(std::string);											// deletes the specified table
 	void save(table, std::string);
 	void show(table); //
-	table update(table tbl, std::string cond_attr, std::string cond_val,			// updates rows that match the condition
-		std::string op, std::vector<std::string> attr_list,
-		std::vector<std::string> val_list);
-	table create(std::vector<std::string> attributes);								// creates a new table with the specified name
-	table insert_tuple(table dest_tbl, table tuples);								// inserts a new row into the table
-	table delete_tuple(table tbl, std::string cond_attr,							// deletes rows that match the condition
-		std::string cond_val, std::string op);
+	table update(table, std::string, std::string, std::string, 
+		std::vector<std::string>, std::vector<std::string>); 				// updates rows that match the condition
+	table update(std::string, std::string, std::string, std::string, 
+		std::vector<std::string>, std::vector<std::string>);				// overload of update that accepts the table name as a string
+	table create(std::vector<std::string>);									// creates a new table with the specified name
+	table insert_tuple(table, table);										// inserts a new row into the table
+	table insert_tuple(std::string, table);									// overload of insert_tuple that accepts string
+	table delete_tuple(table, std::string, std::string,	std::string);		// deletes rows that match the condition
+	table delete_tuple(std::string, std::string, std::string, std::string);	// overload of delete_tuple that accepts the table name as a string
 	void print_db();
 	// private:
 	void update_mat(std::string); //
