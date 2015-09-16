@@ -748,3 +748,21 @@ void Database::update_mat(string table_name) {
 	mat_updated = true;
 	fs.close();
 }
+
+void Database::print_db() {
+	if (!mat_updated) {update_mat();}
+
+	for (auto it1: db_copy) {
+		cout << it1.first << " - ";
+		map<string, vector<string> > &inner1 = it1.second;
+		cout << inner1.size() << endl;
+		for (auto it2 : inner1) {
+			cout << it2.first << ": ";
+			vector<string> &innermost = it2.second;
+			for (auto it3 : innermost) {
+				cout << it3 << ' ';	
+			}
+			cout << endl;
+		}
+	}
+}
