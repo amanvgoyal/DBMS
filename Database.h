@@ -40,9 +40,8 @@ public:
 	table insert_tuple(std::string, table);									// overload of insert_tuple that accepts string
 	table delete_tuple(table, std::string, std::string,	std::string);		// deletes rows that match the condition
 	table delete_tuple(std::string, std::string, std::string, std::string);	// overload of delete_tuple that accepts the table name as a string
-	// private:
-	void update_mat(std::string); //
-
+	void update_mat(std::string); 
+	void print_db();
 private:
 	std::fstream fs;
 	table_list db_copy;
