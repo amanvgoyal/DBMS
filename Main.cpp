@@ -16,7 +16,10 @@ int main() {
 	db.update_mat("white_walker.db");
 
 	// Test selection
-
+	cout << "show old_people table, then selection of old_people w/ age < 65" << endl;
+	db.show("old_people");
+	db.show(db.selection("old_people", "age", "<", "65"));
+	
 	// Test projection
 	cout << "project from nights_watch the member, broken_vows, and age\n";
 	vector<string> projection_list;
@@ -27,20 +30,39 @@ int main() {
 	db.show(proj_test);
 
 	// Test renaming
+	cout << "First - human table, 2nd - same table with name renamed to NAME" << endl;
+	db.show("human");
+	cout << endl;
+	db.show(db.renaming("human.db", "name", "NAME"));
+
+	
 
 	// Test set_union
 	cout << "set_union of nights_watch and old_people\n";
 	table union_test = db.set_union("nights_watch", "old_people");
 	db.show(union_test);
 
-	// Test set_diff
-
+	// Test set_diff 
+	cout << "A\B for A = nights_watch, B = old_people using string args" << endl;
+	table diff_test_1 = d.set_diff("nights_watch.db", "old_people");
+	db.show(diff_test_1);
+	
+	// Test set_diff 2
+	cout << "A\B for A = nights_watch, B = old_people using table args" << endl;
+	table diff_test_2 = d.set_diff(union_test, diff_test_1);
+	db.show(diff_test_2);
+	
 	// Test cross_product
 	cout << "cross_product of human and nights_watch\n";
 	table cross_product = db.cross_product("human", "nights_watch");
 	db.show(cross_product);
 
 	// Test close
+	cout << "use close to remove dead_nw from table" << endl;
+	db.print_db();
+	cout << "removing dead_nw..." << endl;
+	db.close("dead_nw");
+	db.print_db();
 
 	// Test save
 	cout << "save union_test\n";
