@@ -97,6 +97,64 @@ table Database::selection(string table_name,
 
 	return result;
 }
+// In relation 'table_name', if attribute 'lhs' exists,
+// check entries 'x' satisfying x op rhs
+table Database::selection(table t, 
+			  string lhs, string op, string rhs) {
+  //table_list::iterator table_it = db_copy.find(table_name);
+  table result;
+  vector<string> selected;
+  // add fitting selection from db_copy to result
+  vector<string> v = t[lhs];
+  for (int i = 0; i < v.size(); ++i) {
+    if (op != "==") {
+      if (!numerical_str(rhs)) {
+	cout << "Non numerical input!" << endl;
+	return result;
+      }
+
+      else { 
+	if ((op == "<" && stod(v[i]) < stod(rhs)) ||
+	    (op == "<=" && stod(v[i]) <= stod(rhs)) ||
+	    (op == ">" && stod(v[i]) > stod(rhs)) ||
+	    (op == ">=" && stod(v[i]) >= stod(rhs))) {
+	  for (auto it : t) {
+	    selected = t[it.first];
+	    result[it.first].push_back(selected[i]);
+	  }
+	}
+      }
+    }
+	
+    // Handles equality for both words and strings
+    else if (op == "==") {
+      if (v[i] == rhs) {
+	for (auto it : t) {
+	  selected = t[it.first];
+	  result[it.first].push_back(selected[i]);
+	}
+      }
+    }
+    else if (op == "!=") {
+      if (v[i] != rhs) {
+	for (auto it : t) {
+	  selected = t[it.first];
+	  result[it.first].push_back(selected[i]);
+	}
+      }
+    }
+    else if (op == "*") {
+      for (auto it : t) {
+	selected = t[it.first];
+	result[it.first].push_back(selected[i]);
+      }
+    }
+  }
+
+  return result;
+}
+
+
 
 table Database::projection(table tbl, vector<string> attributes) {
 	table result;
@@ -255,43 +313,28 @@ table Database::set_union(string tbl_name1, string tbl_name2)
 
 
 // A \ B = {a in A | a not in b}
-table Database::set_diff(string table_name_1, string table_name_2) {
-	table result;
+table Database::set_diff(table table_1, table table_2) {
+  table result;
+     
+  vector<string> t2_data;
 
-	// check if tables exist in the database
-	if (db_copy.count(table_name_1) > 0 && db_copy.count(table_name_2) > 0) {
-		table table_1 = db_copy[table_name_1];
-		table table_2 = db_copy[table_name_2];
-
-		vector<string> t2_data;
-
-		// For each attribute check if corresponding vector in tb1 is not in tb2
-		// If, so add that attribute and its vector into result
-		for (auto& it1 : table_1) {
-			// Case where attributes match
-
-			if (table_2.count(it1.first) > 0) {
-				for (int i = 0; i < it1.second.size(); ++i) {
-					t2_data = table_2[it1.first];
-
-					// If elem not in attr vector 2, but in attr vector 1, put in result 
-					if (find(t2_data.begin(), t2_data.end(), it1.second[i])
-						== t2_data.end()) {
-						result[it1.first].push_back(it1.second[i]);
-					}
-				}
-			}
-
-			// Case where attributes do not mach
-			else {
-				result[it1.first] = it1.second;
-			}
-		}
+  // For each attribute check if corresponding vector in tb1 is not in tb2
+  // If, so add that attribute and its vector into result
+  for (auto& it1 : table_1) {
+    // Case where attributes match
+      
+    if (table_2.count(it1.first) > 0) {
+      for (int i = 0; i < it1.second.size(); ++i) {
+	t2_data = table_2[it1.first];
+	    
+	// If elem not in attr vector 2, but in attr vector 1, put in result 
+	if (find(t2_data.begin(), t2_data.end(), it1.second[i]) 
+	    == t2_data.end()) {
+	  result[it1.first].push_back(it1.second[i]);
 	}
 
 	return result;
 }
-
 table Database::cross_product(table tbl1, table tbl2) {
 	// check if tables exist in the database
 	table result;
