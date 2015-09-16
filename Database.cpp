@@ -311,6 +311,44 @@ table Database::set_union(string tbl_name1, string tbl_name2)
 	}
 }
 
+// A \ B = {a in A | a not in b}
+table Database::set_diff(string table_name_1, string table_name_2){
+  table result;
+  
+  // check if tables exist in the database
+  if (db_copy.count(table_name_1) > 0 && db_copy.count(table_name_2) > 0) {
+    table table_1 = db_copy[table_name_1];
+    table table_2 = db_copy[table_name_2];
+    
+    vector<string> t2_data;
+
+    // For each attribute check if corresponding vector in tb1 is not in tb2
+    // If, so add that attribute and its vector into result
+    for (auto& it1 : table_1) {
+      // Case where attributes match
+      
+      if (table_2.count(it1.first) > 0) {
+	for (int i = 0; i < it1.second.size(); ++i) {
+	  t2_data = table_2[it1.first];
+	    
+	  // If elem not in attr vector 2, but in attr vector 1, put in result 
+	  if (find(t2_data.begin(), t2_data.end(), it1.second[i]) 
+	      == t2_data.end()) {
+	    result[it1.first].push_back(it1.second[i]);
+	  }
+	}
+    }
+      
+    // Case where attributes do not mach
+    else {
+      result[it1.first] = it1.second;
+    }
+  }
+}
+
+return result;
+}
+
 
 // A \ B = {a in A | a not in b}
 table Database::set_diff(table table_1, table table_2) {
