@@ -13,10 +13,9 @@ typedef std::map<std::string, table> table_list;
 class Database {
 public:
 	Database();
-	table selection(std::string,
-		std::string, std::string, std::string);//
+	table selection(std::string, std::string, std::string, std::string);	// returns the specified 	
 	table projection(table, std::vector<std::string>);						// returns the specified attributes
-	void renaming(std::string, std::string, std::string); //
+	void renaming(std::string, std::string, std::string);
 	table set_union(table, table);											// returns the combined data and removes duplicates
 	table set_diff(std::string, std::string);//
 	table cross_product(table, table);										// returns a table that pairs every row of both tables
