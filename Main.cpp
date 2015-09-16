@@ -33,7 +33,10 @@ int main() {
 	cout << "First - human table, 2nd - same table with name renamed to NAME" << endl;
 	db.show("human");
 	cout << endl;
-	db.show(db.renaming("human.db", "name", "NAME"));
+	db.renaming("human.db", "name", "NAME");
+	db.close("human");
+	db.update_mat("human");
+	db.show("human");
 
 	
 
@@ -44,16 +47,17 @@ int main() {
 
 	// Test set_diff 
 	cout << "A\B for A = nights_watch, B = old_people using string args" << endl;
-	table diff_test_1 = d.set_diff("nights_watch.db", "old_people");
+	table diff_test_1 = db.set_diff("nights_watch.db", "old_people");
 	db.show(diff_test_1);
 	
 	// Test set_diff 2
 	cout << "A\B for A = nights_watch, B = old_people using table args" << endl;
-	table diff_test_2 = d.set_diff(union_test, diff_test_1);
+	table diff_test_2 = db.set_diff(union_test, diff_test_1);
 	db.show(diff_test_2);
 	
 	// Test cross_product
 	cout << "cross_product of human and nights_watch\n";
+	db.update_mat("human.db");
 	table cross_product = db.cross_product("human", "nights_watch");
 	db.show(cross_product);
 

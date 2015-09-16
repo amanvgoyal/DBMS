@@ -31,6 +31,7 @@ public:
 	void delete_table(std::string);											// deletes the specified table
 	void save(table, std::string);											// saves the table in a .db file
 	void show(table);														// displays the table in the command prompt
+	void show(std::string);													// overloaded to accept a string table name
 	table update(table, std::string, std::string, std::string,				// updates rows that match the condition
 		std::vector<std::string>, std::vector<std::string>); 
 	table update(std::string, std::string, std::string, std::string,		// overload of update that accepts the table name as a string

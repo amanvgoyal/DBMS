@@ -19,7 +19,7 @@ bool Database::numerical_str(string& s) {
 }
 
 Database::Database() {
-	mat_updated = false;
+	//mat_updated = false;
 }
 
 bool Database::file_exists(string file_name) {
@@ -312,41 +312,41 @@ table Database::set_union(string tbl_name1, string tbl_name2)
 }
 
 // A \ B = {a in A | a not in b}
-table Database::set_diff(string table_name_1, string table_name_2){
-  table result;
-  
-  // check if tables exist in the database
-  if (db_copy.count(table_name_1) > 0 && db_copy.count(table_name_2) > 0) {
-    table table_1 = db_copy[table_name_1];
-    table table_2 = db_copy[table_name_2];
-    
-    vector<string> t2_data;
+table Database::set_diff(string table_name_1, string table_name_2) {
+	table result;
 
-    // For each attribute check if corresponding vector in tb1 is not in tb2
-    // If, so add that attribute and its vector into result
-    for (auto& it1 : table_1) {
-      // Case where attributes match
-      
-      if (table_2.count(it1.first) > 0) {
-	for (int i = 0; i < it1.second.size(); ++i) {
-	  t2_data = table_2[it1.first];
-	    
-	  // If elem not in attr vector 2, but in attr vector 1, put in result 
-	  if (find(t2_data.begin(), t2_data.end(), it1.second[i]) 
-	      == t2_data.end()) {
-	    result[it1.first].push_back(it1.second[i]);
-	  }
+	// check if tables exist in the database
+	if (db_copy.count(table_name_1) > 0 && db_copy.count(table_name_2) > 0) {
+		table table_1 = db_copy[table_name_1];
+		table table_2 = db_copy[table_name_2];
+
+		vector<string> t2_data;
+
+		// For each attribute check if corresponding vector in tb1 is not in tb2
+		// If, so add that attribute and its vector into result
+		for (auto& it1 : table_1) {
+			// Case where attributes match
+
+			if (table_2.count(it1.first) > 0) {
+				for (int i = 0; i < it1.second.size(); ++i) {
+					t2_data = table_2[it1.first];
+
+					// If elem not in attr vector 2, but in attr vector 1, put in result 
+					if (find(t2_data.begin(), t2_data.end(), it1.second[i])
+						== t2_data.end()) {
+						result[it1.first].push_back(it1.second[i]);
+					}
+				}
+			}
+
+			// Case where attributes do not mach
+			else {
+				result[it1.first] = it1.second;
+			}
+		}
 	}
-    }
-      
-    // Case where attributes do not mach
-    else {
-      result[it1.first] = it1.second;
-    }
-  }
-}
 
-return result;
+	return result;
 }
 
 
@@ -458,11 +458,6 @@ void Database::open(string table_name) {
 
 //Removes a table from db_copy                                    
 void Database::close(string table_name) {
-	if (!file_exists(table_name))
-	{
-		throw invalid_argument("File alrady exists!");
-	}
-
 	if (db_copy.count(table_name) > 0) {
 		db_copy.erase(table_name);
 	}
@@ -511,6 +506,19 @@ void Database::show(table t) {
 		cout << endl;
 	}
 	cout << endl;
+}
+
+void Database::show(string tbl_name)
+{
+	table_list::iterator it = db_copy.find(tbl_name);
+	if (it != db_copy.end())
+	{
+		show(it->second);
+	}
+	else
+	{
+		cerr << "The table does not exist!\n";
+	}
 }
 
 table Database::update(table tbl, string cond_attr, string op, string cond_val, vector<string> attr_list, vector<string> val_list)
@@ -788,9 +796,9 @@ void Database::update_mat(string table_name) {
 }
 
 void Database::print_db() {
-	if (!mat_updated) {update_mat();}
+	//if (!mat_updated) {update_mat();}
 
-	for (auto it1: db_copy) {
+	for (auto it1 : db_copy) {
 		cout << it1.first << " - ";
 		map<string, vector<string> > &inner1 = it1.second;
 		cout << inner1.size() << endl;
@@ -798,7 +806,7 @@ void Database::print_db() {
 			cout << it2.first << ": ";
 			vector<string> &innermost = it2.second;
 			for (auto it3 : innermost) {
-				cout << it3 << ' ';	
+				cout << it3 << ' ';
 			}
 			cout << endl;
 		}
