@@ -45,7 +45,7 @@ int main() {
 
   // Test set_diff 
   cout << "A\\B for A = nights_watch, B = old_people using string args" << endl;
-  table diff_test_1 = db.set_diff("nights_watch", "old_people");
+  table diff_test_1 = db.set_diff("nights_watch.db", "old_people");
   db.show(diff_test_1);
 	
   // Test set_diff 2
@@ -96,13 +96,13 @@ int main() {
   values.push_back("n");
   db.update("old_people", "age", "<", "55", attributes, values);
   // Test ">"
-  cout << "update from old_people_where age > 55\n";
+  cout << "update from old_people_where age > 55";
   db.update("old_people", "age", ">", "55", attributes, values);
   // Test "<="
-  cout << "update from old_people_where age <= 55\n";
+  cout << "update from old_people_where age <= 55";
   db.update("old_people", "age", "<=", "55", attributes, values);
   // Test ">="
-  cout << "update from old_people_where age >= 55\n";
+  cout << "update from old_people_where age >= 55";
   db.update("old_people", "age", ">=", "55", attributes, values);
 
   // Test create
